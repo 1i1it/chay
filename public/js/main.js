@@ -1,430 +1,103 @@
   
-  var app = angular.module('myApp', []);
-  app.controller('teasCtrl', function($scope, $http) {
+  var app = angular.module('myApp', ["ngRoute"]);
+  app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "tea_store.html",
+        controller: 'teasCtrl',
+        type: 'expensive'
+    })
+    .when("/one_tea", {
+        templateUrl : "one_tea.html"
+    })
+    .when("/filters", {
+        templateUrl : "filters.html"
+    })
+    .when('/red', {
+    	templateUrl: 'tea_store.html',
+    	controller: 'teasCtrl',
+    	type: 'red'
+    })
+    });
+  app.controller('teasCtrl', function($scope, $http, $route) {
+    if ($route.current && $route.current.$$route.type == 'red') {
+    	$scope.showRed();
+    }
+    else if ($route.current && $route.current.$$route.type == 'expensive') {
+    	$scope.showExpensive();
+    }
+
+
+  	window.scope = $scope;
     $scope.showAllTeas = true;
 
 
-    $scope.showEdit = function(book) {
-      $scope.showEditBook = true;
+    $scope.edittea = function(tea) {
+      $http.put("/teas/" + tea.pk, {"title": tea.fields.title, description: tea.fields.description});
+      current_tea = $scope.teas.filter(function(cur_tea) { return cur_tea.pk == tea.pk })[0];
+      current_tea.fields.title = tea.fields.title;
     }
 
-    $scope.editBook = function(book) {
-      $http.put("/books/" + book.pk, {"title": book.fields.title, description: book.fields.description});
-      current_book = $scope.books.filter(function(cur_book) { return cur_book.pk == book.pk })[0];
-      current_book.fields.title = book.fields.title;
-    }
-
-    $scope.removeBook = function(book) {
-      $scope.books = $scope.books.filter(function(cur_book) { return cur_book.pk != book.pk });
-      $http.delete('/books/' + book.pk);
-      $scope.showAddBook = true;
+    $scope.removetea = function(tea) {
+      $scope.teas = $scope.teas.filter(function(cur_tea) { return cur_tea.pk != tea.pk });
+      $http.delete('/teas/' + tea.pk);
+      $scope.showAddtea = true;
       $scope.showTable()
     }
 
     $scope.showTable = function() {
-      $scope.showBookTable = true;
-      $scope.showSingleBook = false;
-      $scope.showEditBook = false;
-      $scope.showAddBook = true;
+      $scope.showteaTable = true;
+      $scope.showSingletea = false;
+      $scope.showEdittea = false;
+      $scope.showAddtea = true;
     }
 
-    $scope.addBook = function() {
-      $scope.showAddBook = true;
-      $http.post("/books/ ", {"title":$scope.newTitle, description:$scope.newDesc})
+    $scope.addtea = function() {
+      $scope.showAddtea = true;
+      $http.post("/teas/ ", {"title":$scope.newTitle, description:$scope.newDesc})
       .then(function (response) {
-       var book = response.data;
-       $scope.books.push(book);
+       var tea = response.data;
+       $scope.teas.push(tea);
      });
       $scope.showTable()
     }
 
-    $scope.setSelectedBook = function(book) {
-      $scope.showAddBook = false;
-      $http.get("/teas/" + book.pk)
+    $scope.showBlack = function() {
+    	$http.get("/show_teas?category=Black")
+    	.then(function (response) {
+        $scope.teas = response.data.teas;
+      });
+    }
+
+    $scope.showRed = function() {
+    	$http.get("/show_teas?category=Red")
+    	.then(function (response) {
+        $scope.teas = response.data.teas;
+      });
+    }
+
+    $scope.showGreen = function() {
+    	$http.get("/show_teas?category=Green")
+    	.then(function (response) {
+        $scope.teas = response.data.teas;
+      });
+    }
+
+    $scope.setSelectedTea = function(tea) {
+      $http.get("/one_tea?_id=" + tea._id)
       .then(function (response) {
         $scope.selectedTea = response.data.tea;
+        $scope.showOneTea = true;
+        $scope.showAllTeas = false;
       });
     };
 
+    $scope.showExpensive = function() {
     $http.get("/expensive_teas")
     .then(function (response) {
       $scope.teas = response.data.teas;
     });
-
+};
 
   });
 
-
-// $.material.init();
-
-// $(document).ready(function() {
-// 	$("#search").show();
-// 	//$("#search").hide();
-
-// });
-
-// window.CM = {}; //Cosmeticall global object
-
-// function show_loader() {
-// 	$("#search").hide(); 
-// 	$("#supplier").hide();
-// 	$("#results").hide();
-// 	$("#loader").show();	
-// 	$("#results_menu_button").show();  
-// };
-
-// function get_quote_button() {
-// 	setCurrentState('get_quote_button');
-// 	$("#search").hide(); 
-// 	$("#supplier").hide();
-// 	$("#results").hide();
-// 	$("#contact_supplier").hide();
-// 	$("#my_requests").hide();
-// 	$("#get_quote").show();
-// 	$(".menuBtn").removeClass('active');
-// 	$("#get_quote_menu_button").addClass('active');
-// };
-
-// function my_requests_button() {
-// 	setCurrentState('my_requests_button');
-// 	$("#search").hide(); 
-// 	$("#supplier").hide();
-// 	$("#results").hide();
-// 	$("#contact_supplier_form").hide(); 
-// 	$("#contact_supplier").hide();
-// 	$(".quote-msg").hide();
-// 	$("#get_quote").hide();
-// 	$("#search_menu_button").show();
-// 	$("#my_requests").show();
-// 	$(".menuBtn").removeClass('active');
-// 	$("#my_requests_menu_button").addClass('active');
-// };
-
-// function show_contact_supplier() {
-// 	setCurrentState('show_contact_supplier');
-// 	$("#search").hide(); 
-// 	$("#results").hide();
-// 	$("#my_requests").hide();
-// 	$(".quote-msg").hide();
-// 	$("#get_quote").hide();
-// 	$("#contact_supplier").show(); 
-
-// };
-
-
-// function click_user(user_id){
-// 	// removed var here
-// 	setCurrentState('-');	
-// 	filtered_users = users_found.filter(function(user) { return user._id == user_id; });
-// 	clicked_user   = filtered_users[0];
-// 	var template = $('#user_details_template').html();
-// 	var rendered = Mustache.render(template, clicked_user);
-
-// 	$('#singleSupplier').html(rendered);
-// 	supplier_button();
-// 	$("#supplier_phone").hide();
-// 	$("#thank_you_send_sms").hide();
-// 	$("#my_requests").hide();
-// 	$("#contact_supplier_form").show();
-// 	$("#contact_supplier_button").show(); 
-// };
-// function results_button(){
-// 	setCurrentState('results_button')
-// 	//use a class to hide many elements at once - $(".menuBtn").hide();
-// 	$("#search").hide(); 
-// 	$("#supplier").hide();
-// 	$("#loader").hide();
-// 	$("#contact_supplier").hide();
-// 	$("#my_requests").hide();
-// 	$(".quote-msg").hide();
-// 	$("#get_quote").hide();
-// 	$("#results").show();
-// 	$("#show").addClass('active');
-
-// 	$("#search_menu_button").show();
-// 	$(".menuBtn").removeClass('active');
-// 	$("#results_menu_button").addClass('active');
-// };
-
-// function search_button(){
-// 	setCurrentState('search_button')
-// 	$("#results").hide(); 
-// 	$("#supplier").hide();
-// 	$("#loader").hide();
-// 	$("#contact_supplier").hide();
-// 	$("#my_requests").hide();
-// 	$(".quote-msg").hide();
-// 	$("#get_quote").hide();
-// 	$("#search").show();
-// 	$(".menuBtn").removeClass('active');
-// 	$("#search_menu_button").addClass('active');
-// };
-
-// function supplier_button(){
-// 	$("#search").hide(); 
-// 	$("#results").hide();
-// 	$("#loader").hide();
-// 	$("#my_requests").hide();
-// 	$(".quote-msg").hide();
-// 	$("#get_quote").hide();
-// 	$("#supplier").show();
-// 	$("#supplier_menu_button").show();
-// 	$(".menuBtn").removeClass('active');
-// 	$("#supplier_menu_button").addClass('active');
-// };
-
-// function contact_supplier() {
-// 	setCurrentState('contact_supplier')
-// 	var template_phone = $('#user_details_phone').html();
-// 	var rendered_phone = Mustache.render(template_phone, clicked_user);
-// 	$("#contact_supplier_form").hide(); 
-// 	$("#supplier_phone").show();
-// 	$("#thank_you_send_sms").show();
-// 	$("#contact_supplier_text").hide(); 
-// 	$("#contact_supplier_button").hide();  
-	
-// 	$('#supplier_phone').html(rendered_phone); // replace singleSupplier
-
-
-// 	// var template = $('#user_details_template').html();
-// 	// var rendered = Mustache.render(template, clicked_user);
-// 	// $("#singleSupplier").show();  //PPPP
-// 	// $('#singleSupplier').html(rendered); // PPPPP
-	
-
-// };
-
-// function submitDetailsForm() {
-// 	show_loader();
-// 	var search_name = $("#search_name_input").val();
-// 	var search_treatment = $("#search_treatment_input").val();
-// 	var search_city = $("#search_city_input").val();
-// 	var search_home_visits = $("#search_home_visits_input").is(':checked');
-// 	$.ajax({
-// 		url: '/search_ajax',
-// 		type: 'post',
-// 		dataType: 'json',
-// 		data: {name: search_name, city: search_city, treatments:search_treatment, home_visits: search_home_visits},
-// 		success: function(response) {
-// 			users_found = response.users;
-// 			var template = $('#found_users_template').html();
-// 			var rendered = Mustache.render(template, response);
-// 			var found_count = "מצאנו " + users_found.length + " אנשי מקצוע";
-// 			$('#resultsList').html(rendered);
-// 			$('#users_count').html(found_count);
-// 			CM.users_to_send_quote = [] // save users we found in this arry, to later send quote to them. how to grab this in different function?
-// 			for (i in users_found) {
-// 				CM.users_to_send_quote.push(users_found[i]["phone"]);
-
-// 			};
-// 			results_button();}
-
-// 		});
-// };
-
-// function verifyQuoteForm(){
-//          //var options = $('#quote_treatments > option:selected');
-//          var options = $('.treatment_option:selected');
-//          var options_address = $('#autocomplete_quote_address');
-//          var options_phone = $('#quote_phone_modal');
-//          if(options_address.val() == 0){
-//              alert('please enter address');
-//              return false;
-//          };
-//          if(options_phone.val().length < 10){	
-//              alert('please enter full phone');
-//              return false;
-//          };
-//          if(options.length == 0){
-//              alert('please select one or more treatments');
-//              return false;
-//     };
-//     return true;
-// };
-
-
-// function checkPhoneEntered(){
-//     var options_phone = $('#phone_field');
-//     if(options_phone.val().length < 10){	
-//     alert('please enter full phone');
-//     console.log('form bad; stopping.')
-//     return false;
-//     };
-// };
-
-
-// function submitGetQuoteForm() {
-// 	var formOK = verifyQuoteForm()
-// 	if (formOK == false) { 
-// 		console.log('form bad; stopping.')
-// 		return false;
-// 	}
-
-// 	show_loader();
-// 	$("#results_menu_button").hide(); 
-// 	var phone = $("#quote_phone").val();
-// 	var month = $("#quote_month").val();
-// 	var day = $("#quote_day").val();
-// 	var time_around = $("#quote_time_around").val();
-// 	var at_home = $("#quote_at_home").is(':checked');
-// 	var latitude = $("#lat").val();
-// 	var longitude = $("#lng").val();
-// 	var treatments = $("#quote_treatments").val();
-// 	var address = $("#autocomplete_quote_address").val();
-// 	$.ajax({
-// 		url: '/create_quote',
-// 		type: 'post',
-// 		dataType: 'json',
-// 		data: {
-// 		phone:phone,
-// 		month:month,
-//  		day:day,
-//  		time_around:time_around,
-// 		at_home:at_home,
-// 		latitude:latitude,
-// 		longitude:longitude,
-// 		treatments:treatments,
-// 		address:address
-// 		},
-// 		success: function(response) {
-// 			if ( response.quote.sellers_sent_to.length < 1) {
-// 			$("#loader").hide();
-// 			$("#get_quote").hide();
-// 			$("#get_quote_menu_button").hide();
-// 			$("#send_quote_no_sellers").show();
-// 			} else {
-//     		$("#loader").hide();
-// 			$("#get_quote").hide();
-// 			$("#get_quote_menu_button").hide();
-// 			$("#send_quote_thank_you").show();}
-// 			}
-// 		});
-// };
-
-// function ContactSupplier() {
-// 	// show_loader();
-// 	var user_phone = $("#user_phone_for_sms").val();
-// 	if ( user_phone && (user_phone.length > 1) && (user_phone.length < 10) ) {
-// 		alert("המספר לא תקין.");
-// 		return;
-// 	}
-
-// 	var description = $("#description").val();
-// 	if ( description.length < 5) {
-// 		alert("הודעה קצרה מדי! :)");
-// 		return;
-// 	}
-
-
-// 	var supplier_phone = clicked_user["phone"];
-// 	if ($("#user_phone_for_sms").length && !user_phone) {
-// 		alert("נא להכניס את המספר שלך.");
-// 		return;
-// 	}
-// 	$.ajax({
-// 		url: '/contact_supplier_ajax',
-// 		type: 'post',
-// 		dataType: 'json',
-// 		data: {phone: user_phone, description:description, supplier_phone:supplier_phone},
-// 		success: function(response) {
-// 			contact_supplier();
-// 		},
-//  		error: function(){contact_supplier();}
-// 		});
-// };
-
-// function appendImgInput(event) {
-// 	$("#profilePicUploader").hide();
-//   $("#profile_pic_input").val(event.fpfile.url);
-//   $("#profile_pic_img").attr('src',(event.fpfile.url));
-// }
-// console.log("done running main.js");
-
-
-// function back_button(event) {
-// 	try {
-// 		function_name = event.state.function_name;
-// 	  window[function_name]();	
-// 	} catch(e) {
-// 		history.back();
-// 	}
-// };
-
-
-// window.onpopstate = back_button;
-
-// function setCurrentState(function_name) {
-// 	curState = history && history.state && history.state.function_name 
-// 	if (curState !== function_name) {
-// 		history.pushState({function_name: function_name}, '/', '/'); 
-// 	}
-// }
-
-// function verifyQuoteFormModal(){
-// 	var options_phone = $('#quote_phone_modal');
-// 	var address = $("#autocomplete_quote_address").val();
- 
-//   if(options_phone.val().length < 10){	
-//      alert('please enter full phone');
-//      return false;
-//   };
-
-
-//   return true;
-// };
-
-// function submitGetQuoteFormModal() {
-// 	var formOK = verifyQuoteFormModal()
-// 	if (formOK == false) { 
-// 		console.log('form bad; stopping.')
-// 		return false;
-// 	}
-
-// 	show_loader();
-// 	$("#results_menu_button").hide(); 
-// 	var phone = $("#quote_phone_modal").val();
-// 	var month = $("#quote_month_modal").val();
-// 	var day = $("#quote_day_modal").val();
-// 	var time_around = $("#quote_time_around_modal").val();
-// 	var at_home = $("#search_home_visits_input").is(':checked');
-// 	var area = $("#search_city_input").val();
-// 	var address = $("#autocomplete_quote_address").val();
-// 	var sellers_sent_to = CM.users_to_send_quote;
-// 	// var latitude = $("#lat").val();
-// 	// var longitude = $("#lng").val();
-// 	var treatments = $("#search_treatment_input").val();
-// 	// var address = $("#autocomplete_quote_address").val();
-// 	$.ajax({
-// 		url: '/create_quote_modal',
-// 		type: 'post',
-// 		dataType: 'json',
-// 		data: {
-// 		phone:phone,
-// 		month:month,
-// 		address: address,
-//  		day:day,
-//  		address: address,
-//  		time_around:time_around,
-// 		at_home:at_home,
-// 		area:area,
-// 		sellers_sent_to:sellers_sent_to,
-// 		// latitude:latitude,
-// 		// longitude:longitude,
-// 		// address:address,
-// 		treatments:treatments,
-		
-// 		},
-// 		success: function(response) {
-// 			if ( response.quote.sellers_sent_to.length < 1) {
-// 			$("#loader").hide();
-// 			$("#get_quote").hide();
-// 			$("#get_quote_menu_button").hide();
-// 			$("#send_quote_no_sellers").show();
-// 			} else {
-//     		$("#loader").hide();
-// 			$("#get_quote").hide();
-// 			$("#get_quote_menu_button").hide();
-// 			$("#send_quote_thank_you").show();}
-// 			}
-// 		});
-// };
