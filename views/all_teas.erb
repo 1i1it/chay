@@ -4,11 +4,7 @@
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <!--   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-  <!--   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-
-  <!--   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script> -->
+  <link rel="stylesheet" href="/css/lib/bootstrap3.min.css">
   <style>
     /* Remove the navbar's default rounded borders and increase the bottom margin */
     .navbar {
@@ -30,75 +26,83 @@
 </head>
 <body>
 
-
- <div ng-app="myApp" ng-controller="teasCtrl" style="margin-top: 20px;" >
-
-<!--   <script type="text/ng-template" id="filters.html">
-
-  <div class="btn-group">
-   <p>
-    <button ng-click=showBlack() class="btn btn-primary">Black teas</button>
-  </p>
-
-  <p>
-    <button ng-click=showGreen() class="btn btn-primary">Green teas</button>
-  </p>
-  
-  <p>
-    <button ng-click=showRed() class="btn btn-primary">Red teas</button>
-  </p>
+<div class="jumbotron">
+  <div class="container text-center">
+    <h1>Tea Store</h1>
+    <p>Best tea in town!</p>
   </div>
+</div>
 
-  <a href="#/red"> Filtered Teas </a>
-</script>
--->
-<div class="container">
-  <div ng-view>
-
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Logo</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+<!--         <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">Products</a></li>
+        <li><a href="#">Deals</a></li>
+        <li><a href="#">Stores</a></li>
+        <li><a href="#">Contact</a></li> -->
+        <li><a href="#/"> All teas</a></li>
+        <li><a href="#/category/red"> Red teas</a></li>
+          <li><a href="#/category/green" >Green teas</a></li>
+          <li><a href="#/category/black" >Black teas</a></li>
+          <li><a href="#/category/white" >White teas</a></li>
+          <li><a href="#/caffein_free/true" >Caffein-free teas</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+      </ul>
+    </div>
   </div>
+</nav>
 
+<div ng-app="myApp" zng-controller="teasCtrl" style="margin-top: 20px;" >
+  <div class="container">
+    <div ng-view>
 
-
-</div> <!-- container div -->
-
-<script type="text/ng-template" id="tea_store.html">
-  <div ng-show="showAllTeas">
-
-    <div class="row">
-      <div class="btn-group">
-       <p>
-
-        <button ng-click=showExpensive() class="btn btn-primary">All teas</button>
-        <button ng-click=showBlack() class="btn btn-primary">Black teas</button>
-        <button ng-click=showGreen() class="btn btn-primary">Green teas</button>
-        <a href="#/red"><button class="btn btn-primary">Red teas</button>
-      </p>
     </div>
 
-    <div ng-repeat="tea in teas" ng-click=setSelectedTea(tea)>
 
-      <div class="col-sm-4">
-        <div class="panel panel-primary">
-          <div class="panel-heading">{{tea.name}}</div>
-          <div class="panel-body"><img src={{tea.image}} class="img-responsive" width="500" height="300" alt="Image"></div>
-          <div class="panel-footer">Price: {{tea.price}}</div>
-          <div class="panel-footer">Category: {{tea.category}}</div>
-          <div class="panel-footer">Description: {{tea.description}}</div>
 
+  </div> <!-- container div -->
+
+  <script type="text/ng-template" id="tea_store.html">
+      <div class="row">
+
+      <div ng-repeat="tea in teas">
+
+        <div class="col-sm-4">
+            <div class="panel panel-primary">
+            <div class="panel-heading">{{tea.name}}</div></a>
+            <a href="#/one_tea?_id={{tea._id}}"><div class="panel-body"><img src={{tea.image}} class="img-responsive" width="500px" height="300px" alt="Image" style='height:300px; width: 500px;'></div>
+            <div class="panel-footer">Price: {{tea.price}}</div>
+            <div class="panel-footer">Category: {{tea.category}}</div>
+            <div class="panel-footer">Description: {{tea.description}}</div>
+            <p><div class="btn btn-primary">Add to cart</div></p>
+
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div> <!-- ng show  -->
+  </div> <!-- ng show  -->
 </script>
 
 <script type="text/ng-template" id="one_tea.html">
-  <div ng-show="showOneTea" class="col-md-4 col-md-offset-4">
+  <div class="">
     <div class="row">
-      <div class="col-sm-4">
+      <div class="col-sm-4 col-md-6 col-sm-offset-4 col-md-offset-3">
         <div class="panel panel-primary">
           <div class="panel-heading">{{selectedTea.name}}</div>
-          <div class="panel-body"><img src={{selectedTea.name}} class="img-responsive" style="width:100%" alt="Image"></div>
+          <div class="panel-body"><img src={{selectedTea.image}} class="img-responsive" style="width:100%" alt="Image"></div>
           <div class="panel-footer">Price: {{selectedTea.price}}</div>
           <div class="panel-footer">Category: {{selectedTea.category}}</div>
           <div class="panel-footer">Description: {{selectedTea.description}}</div>

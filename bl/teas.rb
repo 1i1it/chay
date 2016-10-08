@@ -4,7 +4,7 @@ $teas = $mongo.collection('teas')
 CATEGORIES = ["Green", "Red", "White", "Black"]
 TEAS = ["Lotus", "Fruit", "Roibus", "Lemon"]
 IMAGES = ["http://f.tqn.com/y/britishfood/1/0/f/0/-/-/tealeaves.jpg", "https://auntpattysporch.files.wordpress.com/2015/09/loose-leaf-tea.jpg", "http://pad1.whstatic.com/images/thumb/f/f7/Store-Loose-Leaf-Tea-Step-1.jpg/aid845114-728px-Store-Loose-Leaf-Tea-Step-1.jpg"]
-#["/public/img/tea1.jpeg", "/public/img/tea2.jpeg",]
+
 # product page
 get "/one_tea" do 
 	tea =  $teas.get(_id: params[:_id])
@@ -20,7 +20,7 @@ end
 get '/expensive_teas' do 
 	# opts = {sort: [{created_at: -1}], limit: 10}
 	# teas =  $teas.get_many(criteria, opts)
-	teas = $teas.find().sort({price:-1}).limit(9).to_a
+	teas = $teas.find().sort({price:-1}).limit(9).to_a.shuffle
 	#teas = $teas.all
   	{teas:teas}
 end 
@@ -35,14 +35,13 @@ get '/show_teas' do
 		opts = nil
 		criteria = {}
 		criteria[:name] = {"$regex" => Regexp.new(params[:name], Regexp::IGNORECASE) } if params[:name].present?
-		criteria[:caffein_free] = 'true' if (params[:caffein_free].to_s == 'true')
-		criteria[:category] = params['category']
-		
+		criteria[:caffein_free] = (params[:caffein_free] == 'true') if criteria[:caffein_free]
+		criteria[:category] = params['category'].capitalize if params['category']
 		# for most expensive teas
 		#teas.find().sort({price:-1}).limit(10)
 		# In case of a large collection, it's better to define an index on age field. 
 		# Then if you use db.collection.find({}, {age: 1, _id:0}).sort({age:-1}).limit(1)
-		if params[:price]
+		if params[:price] && params[:expensive] 
 			opts = {sort: [{created_at: -1}], limit: 10}
 		end
 		teas =  opts ? $teas.get_many(criteria, opts) : $teas.get_many(criteria)
