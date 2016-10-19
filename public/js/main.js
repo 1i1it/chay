@@ -57,7 +57,7 @@ app.service('Cart', function(){
 
 app.controller('headerCtrl', function($scope, Cart) {
    $scope.cart = Cart;
-   $scope.foo = 'hello'
+   $scope.text = 'enter your text'
 });
 
 app.controller('oneTeaCtrl', function($scope, $http, $route, Cart) {
@@ -84,10 +84,24 @@ app.controller('teasCtrl', function($scope, $http, $route, Cart) {
 		});
 	}
 
+	$scope.showText= function() {
+		$http.get("/show_teas?name="  + $scope.value)
+		.then(function (response) {
+			$scope.teas = response.data.teas;
+		});
+	}
+
+// else if ($route.current && $route.current.params.value) {
+// 		$scope.value = $route.current.params.value;
+// 		$scope.showText();
+
 	if ($route.current && $route.current.params.filterType) {
 		$scope.filterType = $route.current.params.filterType;
 		$scope.filterVal = $route.current.params.filterVal;
 		$scope.showFiltered();
+	} else if ($route.current && $route.current.params.value) {
+		$scope.value = $route.current.params.value;
+		$scope.showText();
 	} else {
 		$http.get("/expensive_teas")
 		.then(function (response) {

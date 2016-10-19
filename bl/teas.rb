@@ -20,7 +20,7 @@ end
 get '/expensive_teas' do 
 	# opts = {sort: [{created_at: -1}], limit: 10}
 	# teas =  $teas.get_many(criteria, opts)
-	teas = $teas.find().sort({price:-1}).limit(9).to_a.shuffle
+	teas = $teas.find().sort({price:-1}).limit(9).to_a
 	#teas = $teas.all
   	{teas:teas}
 end 
