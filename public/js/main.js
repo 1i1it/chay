@@ -1,5 +1,12 @@
   
 var app = angular.module('myApp', ["ngRoute"]);
+// // app.service('cartService',function(){
+// 	// add to cart, remove from cart, return items in cart
+// 	this.items = [];
+// 	this.additem =  function(item) { this.items.push(item)};
+// // 	$scope.items = [];
+
+// // })
 app.config(function($routeProvider) {
 	$routeProvider
 	.when("/", {
@@ -19,7 +26,10 @@ app.config(function($routeProvider) {
 		controller: 'teasCtrl',
 		type: 'red'
 	})
-
+	.when('/search/:value', {
+		templateUrl: 'tea_store.html',
+		controller: 'teasCtrl'
+	})
 	.when('/:filterType/:filterVal', {
 		templateUrl: 'tea_store.html',
 		controller: 'teasCtrl'
@@ -27,7 +37,33 @@ app.config(function($routeProvider) {
 
 });
 
-app.controller('oneTeaCtrl', function($scope, $http, $route) {
+app.service('Cart', function(){
+  var cart = {};
+  cart.items = [];
+  cart.addItem = function(item) { 
+  	cart.items.push(item); 
+  }
+
+  cart.removeItem = function(item) { 
+  	cart.items.pop(item); 
+  }
+
+  cart.isInCart = function(obj) { 
+  	 return (cart.items.indexOf(obj) != -1);
+  }
+
+  return cart;
+});
+
+app.controller('headerCtrl', function($scope, Cart) {
+   $scope.cart = Cart;
+   $scope.foo = 'hello'
+});
+
+app.controller('oneTeaCtrl', function($scope, $http, $route, Cart) {
+	window.oneTeaCtrl = $scope;
+	$scope.cart = Cart;
+	
 	$scope.id= $route.current.params._id;
 	$http.get("/one_tea?_id=" + $scope.id)
 	.then(function (response) {
@@ -35,9 +71,11 @@ app.controller('oneTeaCtrl', function($scope, $http, $route) {
 	});
 });
 
-app.controller('teasCtrl', function($scope, $http, $route) {
-	
+app.controller('teasCtrl', function($scope, $http, $route, Cart) {
+	// use service, from controller update service
+	window.teasCtrl = $scope;
 
+	$scope.cart = Cart;
 
 	$scope.showFiltered = function() {
 		$http.get("/show_teas?" + $scope.filterType + "=" + $scope.filterVal)
