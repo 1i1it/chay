@@ -15,11 +15,6 @@ app.config(function($routeProvider) {
 	.when("/filters", {
 		templateUrl : "filters.html"
 	})
-	.when('/red', {
-		templateUrl: 'tea_store.html',
-		controller: 'teasCtrl',
-		type: 'red'
-	})
 	.when('/search/:value', {
 		templateUrl: 'tea_store.html',
 		controller: 'teasCtrl'
@@ -55,7 +50,7 @@ app.service('Cart', function($cookieStore){
 
 app.controller('headerCtrl', function($scope, $cookieStore, Cart) {
    $scope.cart = Cart;
-   $scope.text = ' enter your text'
+   $scope.text = ' search by tea name'
 });
 
 app.controller('oneTeaCtrl', function($scope, $http, $route, $cookieStore, Cart) {
