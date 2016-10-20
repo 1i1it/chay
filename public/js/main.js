@@ -1,5 +1,5 @@
   
-var app = angular.module('myApp', ["ngRoute"]);
+var app = angular.module('myApp', ["ngRoute","ngCookies"]);
 // // app.service('cartService',function(){
 // 	// add to cart, remove from cart, return items in cart
 // 	this.items = [];
@@ -37,11 +37,16 @@ app.config(function($routeProvider) {
 
 });
 
-app.service('Cart', function(){
-  var cart = {};
-  cart.items = [];
+app.service('Cart', function($cookies, $cookieStore){
+  var cartFromCookies = $cookieStore.get('cart');
+  var cart = cartFromCookies || {}
+  cart.items = cart.items || []; 
+  // var cart = ($cookieStore.get('cart') && $cookieStore.get('cart').items) || {};
+  // cart.items = $cookieStore.get('cart').items || [];
   cart.addItem = function(item) { 
-  	cart.items.push(item); 
+  	cart.items.push(item);
+  	$cookieStore.put('cart', cart);
+  	console.log($cookieStore.get('cart').items[0])
   }
 
   cart.removeItem = function(item) { 
@@ -55,12 +60,12 @@ app.service('Cart', function(){
   return cart;
 });
 
-app.controller('headerCtrl', function($scope, Cart) {
+app.controller('headerCtrl', function($scope, $cookies, $cookieStore, Cart) {
    $scope.cart = Cart;
-   $scope.text = 'enter your text'
+   $scope.text = ' enter your text'
 });
 
-app.controller('oneTeaCtrl', function($scope, $http, $route, Cart) {
+app.controller('oneTeaCtrl', function($scope, $http, $route, $cookies, $cookieStore, Cart) {
 	window.oneTeaCtrl = $scope;
 	$scope.cart = Cart;
 	
@@ -71,12 +76,12 @@ app.controller('oneTeaCtrl', function($scope, $http, $route, Cart) {
 	});
 });
 
-app.controller('teasCtrl', function($scope, $http, $route, Cart) {
+app.controller('teasCtrl', function($scope, $http, $route, $cookies, $cookieStore, Cart) {
 	// use service, from controller update service
 	window.teasCtrl = $scope;
 
 	$scope.cart = Cart;
-
+	$scope.cartCookie = $cookieStore.get('item');
 	$scope.showFiltered = function() {
 		$http.get("/show_teas?" + $scope.filterType + "=" + $scope.filterVal)
 		.then(function (response) {
