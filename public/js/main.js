@@ -31,7 +31,7 @@ app.config(function($routeProvider) {
 
 });
 
-app.service('Cart', function($cookies, $cookieStore){
+app.service('Cart', function($cookieStore){
   var cartFromCookies = $cookieStore.get('cart');
   var cart = cartFromCookies || {}
   cart.items = cart.items || []; 
@@ -53,12 +53,12 @@ app.service('Cart', function($cookies, $cookieStore){
   return cart;
 });
 
-app.controller('headerCtrl', function($scope, $cookies, $cookieStore, Cart) {
+app.controller('headerCtrl', function($scope, $cookieStore, Cart) {
    $scope.cart = Cart;
    $scope.text = ' enter your text'
 });
 
-app.controller('oneTeaCtrl', function($scope, $http, $route, $cookies, $cookieStore, Cart) {
+app.controller('oneTeaCtrl', function($scope, $http, $route, $cookieStore, Cart) {
 	window.oneTeaCtrl = $scope;
 	$scope.cart = Cart;
 	
@@ -69,7 +69,7 @@ app.controller('oneTeaCtrl', function($scope, $http, $route, $cookies, $cookieSt
 	});
 });
 
-app.controller('teasCtrl', function($scope, $http, $route, $cookies, $cookieStore, Cart) {
+app.controller('teasCtrl', function($scope, $http, $route, $cookieStore, Cart) {
 	window.teasCtrl = $scope;
 
 	$scope.cart = Cart;
