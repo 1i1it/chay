@@ -129,12 +129,12 @@
                 <div class="panel-footer">Price: {{selectedTea.price}}</div>
                 <div class="panel-footer">Category: {{selectedTea.category}}</div>
                 <div class="panel-footer">Description: {{selectedTea.description}}</div>
-                <div ng-show="!cart.isInCart(tea._id)" class = "cart_button">
-                  <button ng-click="cart.addItem(tea._id)" class="btn btn-primary" >Add to cart</button>
+                <div ng-show="!cart.isInCart(selectedTea._id)" class = "cart_button">
+                  <button ng-click="cart.addItem(selectedTea._id)" class="btn btn-primary" >Add to cart</button>
                 </div>
-                <div  ng-show="cart.isInCart(tea._id)" class = "cart_button" >
+                <div  ng-show="cart.isInCart(selectedTea._id)" class = "cart_button" >
                   This item is in your cart. 
-                  <button ng-click="cart.removeItem(tea._id)" class="btn btn-primary">Remove</button>
+                  <button ng-click="cart.removeItem(selectedTea._id)" class="btn btn-primary">Remove</button>
                 </div>
               </div>
             </div>

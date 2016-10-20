@@ -38,11 +38,12 @@ app.service('Cart', function($cookies, $cookieStore){
   cart.addItem = function(item) { 
   	cart.items.push(item);
   	$cookieStore.put('cart', cart);
-  	console.log($cookieStore.get('cart').items[0])
   }
 
   cart.removeItem = function(item) { 
   	cart.items.pop(item); 
+  	$cookieStore.remove('cart');
+  	$cookieStore.put('cart', cart);
   }
 
   cart.isInCart = function(obj) { 
@@ -69,11 +70,9 @@ app.controller('oneTeaCtrl', function($scope, $http, $route, $cookies, $cookieSt
 });
 
 app.controller('teasCtrl', function($scope, $http, $route, $cookies, $cookieStore, Cart) {
-	// use service, from controller update service
 	window.teasCtrl = $scope;
 
 	$scope.cart = Cart;
-	$scope.cartCookie = $cookieStore.get('item');
 	$scope.showFiltered = function() {
 		$http.get("/show_teas?" + $scope.filterType + "=" + $scope.filterVal)
 		.then(function (response) {
