@@ -1,12 +1,6 @@
   
 var app = angular.module('myApp', ["ngRoute","ngCookies"]);
-// // app.service('cartService',function(){
-// 	// add to cart, remove from cart, return items in cart
-// 	this.items = [];
-// 	this.additem =  function(item) { this.items.push(item)};
-// // 	$scope.items = [];
 
-// // })
 app.config(function($routeProvider) {
 	$routeProvider
 	.when("/", {
@@ -41,8 +35,6 @@ app.service('Cart', function($cookies, $cookieStore){
   var cartFromCookies = $cookieStore.get('cart');
   var cart = cartFromCookies || {}
   cart.items = cart.items || []; 
-  // var cart = ($cookieStore.get('cart') && $cookieStore.get('cart').items) || {};
-  // cart.items = $cookieStore.get('cart').items || [];
   cart.addItem = function(item) { 
   	cart.items.push(item);
   	$cookieStore.put('cart', cart);
@@ -95,10 +87,6 @@ app.controller('teasCtrl', function($scope, $http, $route, $cookies, $cookieStor
 			$scope.teas = response.data.teas;
 		});
 	}
-
-// else if ($route.current && $route.current.params.value) {
-// 		$scope.value = $route.current.params.value;
-// 		$scope.showText();
 
 	if ($route.current && $route.current.params.filterType) {
 		$scope.filterType = $route.current.params.filterType;

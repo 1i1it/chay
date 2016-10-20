@@ -1,5 +1,4 @@
 $teas = $mongo.collection('teas')
-#params = {name: "Truffle tea", price: 10, category: "Black tea", caffein_free: false, description: "wonderful tea"}
 
 CATEGORIES = ["Green", "Red", "White", "Black"]
 TEAS = ["Lotus", "Fruit", "Roibus", "Lemon"]
@@ -15,13 +14,9 @@ get '/show_one_tea' do
   erb :"one_tea" 
 end 
 
-
 # homepage
 get '/expensive_teas' do 
-	# opts = {sort: [{created_at: -1}], limit: 10}
-	# teas =  $teas.get_many(criteria, opts)
-	teas = $teas.find().sort({price:-1}).limit(9).to_a
-	#teas = $teas.all
+	teas = $teas.find().sort({price:-1}).to_a
   	{teas:teas}
 end 
 
@@ -37,10 +32,6 @@ get '/show_teas' do
 		criteria[:name] = {"$regex" => Regexp.new(params[:name], Regexp::IGNORECASE) } if params[:name].present?
 		criteria[:caffein_free] = (params[:caffein_free] == 'true') if criteria[:caffein_free]
 		criteria[:category] = params['category'].capitalize if params['category']
-		# for most expensive teas
-		#teas.find().sort({price:-1}).limit(10)
-		# In case of a large collection, it's better to define an index on age field. 
-		# Then if you use db.collection.find({}, {age: 1, _id:0}).sort({age:-1}).limit(1)
 		if params[:price] && params[:expensive] 
 			opts = {sort: [{created_at: -1}], limit: 10}
 		end
@@ -73,11 +64,4 @@ end
 def remove_fake_teas
   $teas.delete_many
 end
-
-
-
-
-get '/bootstrap' do
-  erb :"bootstrap" 
-end 
 
